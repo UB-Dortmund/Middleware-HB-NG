@@ -28,6 +28,8 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.annotation.MultipartConfig;
 import java.io.*;
 import java.util.Properties;
 
@@ -108,8 +110,13 @@ public class MiddlewareHbNg {
         holderHome.setInitParameter("resourceBase", config.getProperty(HBNGStatics.ENDPOINT_HOME_CONTENT_IDENTIFIER));
         context.addServlet(holderHome, "/*");
 
-        // - resource
+        // - "post only endpoint" TODO deprecated
         context.addServlet(new ServletHolder(new MiddlewareHbNgEndpoint(conffile)), config.getProperty(HBNGStatics.ENDPOINT_CONTEXTPATH_IDENTIFIER));
+
+        // - multipart upload
+        ServletHolder multipart = new ServletHolder(new MiddlewareHbNgMultipartEndpoint(conffile));
+        multipart.getRegistration().setMultipartConfig(new MultipartConfigElement(config.getProperty("multipart.path.base"), 1024 * 1024 * Integer.parseInt(config.getProperty("multipart.fileSizeThreshold")), 1024 * 1024 * Integer.parseInt(config.getProperty("multipart.maxFileSize")), 1024 * 1024 * Integer.parseInt(config.getProperty("multipart.maxRequestSize"))));
+        context.addServlet(multipart, "/task/*");
 
         // Start Server
         server.start();

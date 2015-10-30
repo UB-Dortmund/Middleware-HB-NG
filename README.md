@@ -11,6 +11,27 @@
 Bezug: [hb_ng](https://github.com/ubbochum/hb_ng)
 
 
+Die Middleware stellt folgenden Endpoint zur Verfügung:
+
+    http://{host}:{port}/task
+
+Dieser verarbeitet *Multipart-Requests* mit den Parametern:
+
+    file-{lfd. Nr.} : Publikationsliste, z.B. als Word- oder PDF-Datei
+    dataset-mods : MODS-Daten
+    dataset-csl : CSL-Daten (optional)
+    resource-{lfd. Nr.}-type : Document type einer Upload-Datei (z.B. Preprint, Postprint, Datensatz). (optional)
+    resource-{lfd. Nr.}-file : Die Datei für das Upload. (optional)
+    resource-{lfd. Nr.}-note : Bemerkungen zum Upload. (optional)
+
+Beispiele mit cURL:
+
+    curl -X POST -F resource-0-file=@Beitrag.pdf -F resource-0-type=Preprint -F resource-0-note='Bla Blub Hmpf' -F dataset-mods=@TMP/book-example.mods.xml http://localhost:5220/new?uuid=0123456789-test
+    
+    curl -X POST -F file-0=@TMP/liste.docx http://localhost:5220/task
+
+
+
 # Kontakt
 
 **data@ubdo - Datenplattform der Universitätsbibliothek Dortmund**
